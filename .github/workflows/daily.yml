@@ -1,0 +1,33 @@
+name: Daily Activity
+
+on:
+  schedule:
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create daily activity
+        run: |
+          mkdir -p daily-log
+          echo "Activity: $(date -u '+%Y-%m-%d')" >> daily-log/activity.txt
+
+      - name: Commit changes
+        run: |
+          git config user.name "purnima20078"
+          git config user.email "purni20078@gmail.com"
+
+          git add daily-log/activity.txt
+
+          git commit -m "Daily activity $(date -u '+%Y-%m-%d')" || exit 0
+
+          git push
